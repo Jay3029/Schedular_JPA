@@ -71,9 +71,9 @@ public class ScheduleController {
 
     // DELETE (비밀번호 요구)
     @DeleteMapping("/schedules/{id}")
-    public void deleteSchedule(@PathVariable Long id, @RequestBody ScheduleRequestDto scheduleRequestDto) {
+    public void deleteSchedule(@PathVariable Long id) {
 
-        scheduleService.deleteSchedule(id, scheduleRequestDto);
+        scheduleService.deleteSchedule(id);
 
     }
 }

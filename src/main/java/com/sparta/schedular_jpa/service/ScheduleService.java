@@ -87,7 +87,8 @@ public class ScheduleService {
 
 
     // DELETE Schedule Service
-    public void deleteSchedule(Long id, ScheduleRequestDto scheduleRequestDto) {
+    @Transactional
+    public void deleteSchedule(Long id) {
         // 해당 작성자의 일정이 존재하는지 확인
         Schedule schedule = findSchedule(id);
         scheduleRepository.delete(schedule);

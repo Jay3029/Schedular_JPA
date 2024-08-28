@@ -7,7 +7,6 @@ import java.sql.Timestamp;
 @Getter
 public class CommentRequestDto {
 
-    private Long id;
     private String username;
     private String contents;
     private Timestamp createdDate;

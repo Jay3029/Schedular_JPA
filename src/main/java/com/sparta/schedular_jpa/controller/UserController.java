@@ -97,8 +97,9 @@ public class UserController {
 
     // CREATE (유저 추가 등록)
     @PostMapping("/users/assign-users")
-    public void assignUsers(@RequestBody UserScheduleRequestDto userScheduleRequestDto) {
+    public ResponseEntity<UserScheduleResponseDto> assignUsers(@RequestBody UserScheduleRequestDto userScheduleRequestDto) {
         UserScheduleResponseDto userScheduleResponseDto = userService.assignNewUsers(userScheduleRequestDto);
 
+        return ResponseEntity.ok().body(userScheduleResponseDto);
     }
 }

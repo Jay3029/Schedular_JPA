@@ -33,7 +33,7 @@ public class User {
     private Timestamp modifiedDate;
     @Column(name = "schedule_id")
     private String scheduleIdList;
-    @Column(name = "password", nullable = false)
+    @Column(name = "password")
     private String password;
     @Column(name = "role", nullable = false)
     @Enumerated(value = EnumType.STRING)

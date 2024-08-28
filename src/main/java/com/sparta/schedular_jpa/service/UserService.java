@@ -17,6 +17,7 @@ import com.sparta.schedular_jpa.jwt.JwtUtil;
 import com.sparta.schedular_jpa.repository.ScheduleRepository;
 import com.sparta.schedular_jpa.repository.UserRepository;
 import com.sparta.schedular_jpa.repository.UserScheduleRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -109,6 +110,7 @@ public class UserService {
 
 
     // UPDATE
+    @Transactional
     public UserResponseDto updateUser(Long id, UserRequestDto userRequestDto) {
         // ID에 맞는 유저 조회
         User user = findUser(id);
@@ -122,6 +124,7 @@ public class UserService {
 
 
     // DELETE
+    @Transactional
     public void deleteUser(Long id) {
         User user = findUser(id);
         userRepository.delete(user);
