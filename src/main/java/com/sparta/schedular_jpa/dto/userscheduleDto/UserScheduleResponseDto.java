@@ -1,4 +1,4 @@
-package com.sparta.schedular_jpa.dto;
+package com.sparta.schedular_jpa.dto.userscheduleDto;
 
 import com.sparta.schedular_jpa.entity.Schedule;
 import com.sparta.schedular_jpa.entity.User;

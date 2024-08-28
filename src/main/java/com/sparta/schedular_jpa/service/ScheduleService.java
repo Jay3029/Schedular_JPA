@@ -1,16 +1,18 @@
 package com.sparta.schedular_jpa.service;
 
-
-import com.sparta.schedular_jpa.dto.AssignedUsersResponseDto;
-import com.sparta.schedular_jpa.dto.CommentResponseDto;
-import com.sparta.schedular_jpa.dto.ScheduleRequestDto;
-import com.sparta.schedular_jpa.dto.ScheduleResponseDto;
-import com.sparta.schedular_jpa.entity.Comment;
+import com.sparta.schedular_jpa.WeatherUtil;
+import com.sparta.schedular_jpa.dto.WeatherDto;
+import com.sparta.schedular_jpa.dto.userDto.AssignedUsersResponseDto;
+import com.sparta.schedular_jpa.dto.scheduleDto.ScheduleRequestDto;
+import com.sparta.schedular_jpa.dto.scheduleDto.ScheduleResponseDto;
 import com.sparta.schedular_jpa.entity.Schedule;
 import com.sparta.schedular_jpa.entity.User;
 import com.sparta.schedular_jpa.entity.UserSchedule;
+import com.sparta.schedular_jpa.jwt.JwtUtil;
 import com.sparta.schedular_jpa.repository.ScheduleRepository;
-import jakarta.persistence.EntityNotFoundException;
+import com.sparta.schedular_jpa.repository.UserRepository;
+import com.sparta.schedular_jpa.repository.UserScheduleRepository;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -18,26 +20,35 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import javax.swing.*;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class ScheduleService {
 
     private final ScheduleRepository scheduleRepository;
-
+    private final UserScheduleRepository userScheduleRepository;
+    private final JwtUtil jwtUtil;
+    private final WeatherUtil weatherUtil;
+    private final UserRepository userRepository;
 
 
     // CREATE Schedule Service
-    public ScheduleResponseDto createSchedule(ScheduleRequestDto scheduleRequestDto) {
+    public ScheduleResponseDto createSchedule(ScheduleRequestDto scheduleRequestDto, HttpServletRequest request) {
         // RequestDTO -> Entity
+        User user = jwtUtil.getUserFromToken(request, userRepository);
         Schedule schedule = new Schedule(scheduleRequestDto);
+        WeatherDto weather = weatherUtil.getWeatherOfDay();
+
+        schedule.setWeather(weather.getWeather());
+        schedule.setUser_id(user.getId());
 
         // DB에 저장
         scheduleRepository.save(schedule);
+
+        // 유저와 일정의 연관관계 설정
+        UserSchedule userSchedule = new UserSchedule(user, schedule);
+        userScheduleRepository.save(userSchedule);
 
         // Entity -> ResponseDTO
         ScheduleResponseDto scheduleResponseDTO = new ScheduleResponseDto(schedule);
@@ -70,6 +81,7 @@ public class ScheduleService {
     public void updateSchedule(Long id, ScheduleRequestDto scheduleRequestDto) {
         // Optional, 해당 작성자의 일정이 존재하는지 확인
         Schedule schedule = findSchedule(id);
+        System.out.println(scheduleRequestDto.getUserid());
         schedule.update(scheduleRequestDto);
     }
 

@@ -1,4 +1,4 @@
-package com.sparta.schedular_jpa.dto;
+package com.sparta.schedular_jpa.dto.userscheduleDto;
 
 import lombok.Getter;
 

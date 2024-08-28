@@ -1,5 +1,6 @@
 package com.sparta.schedular_jpa.entity;
 
+import com.sparta.schedular_jpa.repository.UserRepository;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

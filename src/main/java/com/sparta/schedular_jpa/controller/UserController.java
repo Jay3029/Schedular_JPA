@@ -1,11 +1,17 @@
 package com.sparta.schedular_jpa.controller;
 
-import com.sparta.schedular_jpa.dto.UserRequestDto;
-import com.sparta.schedular_jpa.dto.UserResponseDto;
-import com.sparta.schedular_jpa.dto.UserScheduleRequestDto;
-import com.sparta.schedular_jpa.dto.UserScheduleResponseDto;
+import com.sparta.schedular_jpa.dto.signinDto.SignInRequestDto;
+import com.sparta.schedular_jpa.dto.signinDto.SignInResponseDto;
+import com.sparta.schedular_jpa.dto.signupDto.SignUpRequestDto;
+import com.sparta.schedular_jpa.dto.signupDto.SignUpResponseDto;
+import com.sparta.schedular_jpa.dto.userDto.UserRequestDto;
+import com.sparta.schedular_jpa.dto.userDto.UserResponseDto;
+import com.sparta.schedular_jpa.dto.userscheduleDto.UserScheduleRequestDto;
+import com.sparta.schedular_jpa.dto.userscheduleDto.UserScheduleResponseDto;
+import com.sparta.schedular_jpa.jwt.JwtUtil;
 import com.sparta.schedular_jpa.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,6 +23,30 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
+    private final JwtUtil jwtUtil;
+
+    // POST 회원가입
+    @PostMapping("/auth/sign-up")
+    public ResponseEntity<SignUpResponseDto> signUpUser(@RequestBody SignUpRequestDto signUpRequestDto) {
+        System.out.println(signUpRequestDto);
+        SignUpResponseDto signUpResponseDto = userService.signUpUser(signUpRequestDto);
+        return ResponseEntity.ok().body(signUpResponseDto);
+    }
+
+    // POST 로그인
+    @PostMapping("/auth/sign-in")
+    public ResponseEntity<SignInResponseDto> signInUser(@RequestBody SignInRequestDto signInRequestDto) {
+        SignInResponseDto signInResponseDto = userService.signInUser(signInRequestDto);
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add("Authorization", signInResponseDto.getToken());
+        return ResponseEntity.ok().headers(httpHeaders).body(signInResponseDto);
+    }
+
+    // GET 토큰 확인
+    @GetMapping("/auth")
+
+
+    /*----------------------------------------------------------------------------------------------------------------*/
 
 
     //CREATE (유저 저장)
@@ -66,7 +96,7 @@ public class UserController {
 
 
     // CREATE (유저 추가 등록)
-    @PostMapping("/users/assignUsers")
+    @PostMapping("/users/assign-users")
     public void assignUsers(@RequestBody UserScheduleRequestDto userScheduleRequestDto) {
         UserScheduleResponseDto userScheduleResponseDto = userService.assignNewUsers(userScheduleRequestDto);
 

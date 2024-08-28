@@ -1,4 +1,4 @@
-package com.sparta.schedular_jpa.dto;
+package com.sparta.schedular_jpa.dto.commentDto;
 
 import com.sparta.schedular_jpa.entity.Comment;
 import lombok.Getter;

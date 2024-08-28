@@ -1,8 +1,7 @@
 package com.sparta.schedular_jpa.service;
 
-import com.sparta.schedular_jpa.dto.CommentRequestDto;
-import com.sparta.schedular_jpa.dto.CommentResponseDto;
-import com.sparta.schedular_jpa.dto.ScheduleResponseDto;
+import com.sparta.schedular_jpa.dto.commentDto.CommentRequestDto;
+import com.sparta.schedular_jpa.dto.commentDto.CommentResponseDto;
 import com.sparta.schedular_jpa.entity.Comment;
 import com.sparta.schedular_jpa.entity.Schedule;
 import com.sparta.schedular_jpa.repository.CommentRepository;
@@ -12,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -19,7 +19,7 @@ public class CommentService {
 
     private final ScheduleRepository scheduleRepository;
     private final CommentRepository commentRepository;
-
+    private final ScheduleService scheduleService;
 
 
     // CREATE
@@ -46,10 +46,22 @@ public class CommentService {
         CommentResponseDto commentResponseDto = new CommentResponseDto(comment);
         return commentResponseDto;
     }
+
     // READ All Comment Service
     public List<CommentResponseDto> getAllComments() {
         // DB 전체 조회
         return commentRepository.findAll().stream().map(CommentResponseDto::new).toList();
+    }
+
+    // READ Some Schedule's Comments Service
+    public List<CommentResponseDto> getCommentsOfSchedule(Long schedule_id) {
+        List<Comment> comments = commentRepository.findByScheduleId(schedule_id);
+        if(comments.isEmpty()) {
+            throw new IllegalArgumentException("There is no comments found for schedule ID: " + schedule_id);
+        }
+
+        // commentRepo -> comment -> schedule -> schedule_id
+        return comments.stream().map(CommentResponseDto::new).toList();
     }
 
 
@@ -64,6 +76,7 @@ public class CommentService {
 
 
     // DELETE Comment
+    @Transactional
     public void deleteComment(Long id) {
         Comment comment = findComment(id);
         commentRepository.delete(comment);

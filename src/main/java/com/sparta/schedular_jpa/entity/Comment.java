@@ -1,14 +1,12 @@
 package com.sparta.schedular_jpa.entity;
 
-import com.sparta.schedular_jpa.dto.CommentRequestDto;
-import com.sparta.schedular_jpa.dto.ScheduleRequestDto;
+import com.sparta.schedular_jpa.dto.commentDto.CommentRequestDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -34,6 +32,8 @@ public class Comment {
     @ManyToOne
     @JoinColumn(name = "schedule_id")
     private Schedule schedule;
+    // Long schedule_Id; -> Class와 Table의 차이
+    // 포함 관계를 통해서 관계를 설정, 근데 단방향임
 
 
     public Comment(CommentRequestDto commentRequestDto) {

@@ -1,13 +1,12 @@
 package com.sparta.schedular_jpa.entity;
 
-import com.sparta.schedular_jpa.dto.ScheduleRequestDto;
+import com.sparta.schedular_jpa.dto.scheduleDto.ScheduleRequestDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,11 +30,14 @@ public class Schedule {
     private Timestamp modifiedDate;
     @Column(name = "user_id")
     private Long user_id;
+    @Column(name = "weather")
+    private String weather;
 
 
     // 다대일 양방향 관계 설정, 영속성 전이 타입을 ALL로 하여 영속 상태 변경에 대해 함께 동작하도록 설정
     @OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL, orphanRemoval = true)
     public List<Comment> comments = new ArrayList<>();
+
 
     // 유저와 할일의 다대다 연관관계를 위한 OneToMany ManyToOne 연관관계 설정
     @OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)

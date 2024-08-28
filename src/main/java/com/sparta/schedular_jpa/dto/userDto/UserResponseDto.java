@@ -1,4 +1,4 @@
-package com.sparta.schedular_jpa.dto;
+package com.sparta.schedular_jpa.dto.userDto;
 
 import com.sparta.schedular_jpa.entity.User;
 import lombok.Getter;

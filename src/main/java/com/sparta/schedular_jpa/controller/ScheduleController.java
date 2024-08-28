@@ -1,8 +1,11 @@
 package com.sparta.schedular_jpa.controller;
 
-import com.sparta.schedular_jpa.dto.ScheduleRequestDto;
-import com.sparta.schedular_jpa.dto.ScheduleResponseDto;
+import com.sparta.schedular_jpa.dto.scheduleDto.ScheduleRequestDto;
+import com.sparta.schedular_jpa.dto.scheduleDto.ScheduleResponseDto;
+import com.sparta.schedular_jpa.entity.User;
+import com.sparta.schedular_jpa.jwt.JwtUtil;
 import com.sparta.schedular_jpa.service.ScheduleService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,14 +19,16 @@ public class ScheduleController {
 
     // JPA Repository Interface 선언
     private final ScheduleService scheduleService;
+    private final JwtUtil jwtUtil;
 
 
 
     // CREATE
     @PostMapping("/schedules")
-    public ScheduleResponseDto createSchedule(@RequestBody ScheduleRequestDto scheduleRequestDto) {
+    public ScheduleResponseDto createSchedule(@RequestBody ScheduleRequestDto scheduleRequestDto,
+                                              HttpServletRequest request) {
 
-        return scheduleService.createSchedule(scheduleRequestDto);
+        return scheduleService.createSchedule(scheduleRequestDto, request);
 
     }
 

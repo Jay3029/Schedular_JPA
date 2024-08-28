@@ -1,20 +1,27 @@
 package com.sparta.schedular_jpa.service;
 
-import com.sparta.schedular_jpa.dto.UserRequestDto;
-import com.sparta.schedular_jpa.dto.UserResponseDto;
-import com.sparta.schedular_jpa.dto.UserScheduleRequestDto;
-import com.sparta.schedular_jpa.dto.UserScheduleResponseDto;
+import com.sparta.schedular_jpa.config.UserPasswordEncoder;
+import com.sparta.schedular_jpa.dto.signinDto.SignInRequestDto;
+import com.sparta.schedular_jpa.dto.signinDto.SignInResponseDto;
+import com.sparta.schedular_jpa.dto.signupDto.SignUpRequestDto;
+import com.sparta.schedular_jpa.dto.signupDto.SignUpResponseDto;
+import com.sparta.schedular_jpa.dto.userDto.UserRequestDto;
+import com.sparta.schedular_jpa.dto.userDto.UserResponseDto;
+import com.sparta.schedular_jpa.dto.userscheduleDto.UserScheduleRequestDto;
+import com.sparta.schedular_jpa.dto.userscheduleDto.UserScheduleResponseDto;
 import com.sparta.schedular_jpa.entity.Schedule;
 import com.sparta.schedular_jpa.entity.User;
+import com.sparta.schedular_jpa.entity.UserRoleEnum;
 import com.sparta.schedular_jpa.entity.UserSchedule;
+import com.sparta.schedular_jpa.jwt.JwtUtil;
 import com.sparta.schedular_jpa.repository.ScheduleRepository;
 import com.sparta.schedular_jpa.repository.UserRepository;
 import com.sparta.schedular_jpa.repository.UserScheduleRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +30,56 @@ public class UserService {
     private final UserRepository userRepository;
     private final UserScheduleRepository userScheduleRepository;
     private final ScheduleRepository scheduleRepository;
+    private final UserPasswordEncoder userPasswordEncoder;
+    private final JwtUtil jwtUtil;
+    private final String ADMIN_TOKEN = "AAABnvxRVklrnYxKZ0aHgTBcXukeZygoC";
+
+
+    // Sign Up (회원 가입)
+    public SignUpResponseDto signUpUser(SignUpRequestDto signUpRequestDto) {
+
+        String username = signUpRequestDto.getUsername();
+        String email = signUpRequestDto.getEmail();
+        String password = userPasswordEncoder.encode(signUpRequestDto.getPassword());
+
+        // 이메일 중복 확인
+        Optional<User> checkUser = userRepository.findByEmail(email);
+        if(checkUser.isPresent()) {
+            throw new IllegalArgumentException("User already exists");
+        }
+
+        // 요청한 권한이 ADMIN인지 확인하고, 맞으면 ADMIN Key를 입력했는지 확인
+        UserRoleEnum role = UserRoleEnum.USER;
+        if(signUpRequestDto.isAdmin()) {
+            if (!ADMIN_TOKEN.equals(signUpRequestDto.getAdminToken())) {
+                throw new IllegalArgumentException("Admin token is invalid");
+            }
+            role = UserRoleEnum.ADMIN;
+        }
+
+        User user = new User(username, email, password, role);
+        userRepository.save(user);
+
+        return new SignUpResponseDto(user);
+    }
+
+    // Sign In (로그인)
+    public SignInResponseDto signInUser(SignInRequestDto signInRequestDto) {
+        String email = signInRequestDto.getEmail();
+        String password = signInRequestDto.getPassword();
+
+        User user = userRepository.findByEmail(email).get();
+        if(user != null && userPasswordEncoder.matches(password, user.getPassword())) {
+
+            String token = jwtUtil.generateJwtToken(user, UserRoleEnum.USER);
+            SignInResponseDto signInResponseDto = new SignInResponseDto(token, email);
+
+            return signInResponseDto;
+        } else {
+            return null;
+        }
+
+    }
 
 
     // CREATE
@@ -99,4 +156,6 @@ public class UserService {
                 new IllegalArgumentException("Is not Exist Schedule.")
         );
     }
+
+
 }

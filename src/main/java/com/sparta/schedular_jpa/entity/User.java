@@ -1,13 +1,13 @@
 package com.sparta.schedular_jpa.entity;
 
-import com.sparta.schedular_jpa.dto.UserRequestDto;
+import com.sparta.schedular_jpa.dto.signupDto.SignUpRequestDto;
+import com.sparta.schedular_jpa.dto.userDto.UserRequestDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,8 +33,11 @@ public class User {
     private Timestamp modifiedDate;
     @Column(name = "schedule_id")
     private String scheduleIdList;
-    @Column(name = "password")
+    @Column(name = "password", nullable = false)
     private String password;
+    @Column(name = "role", nullable = false)
+    @Enumerated(value = EnumType.STRING)
+    private UserRoleEnum role;
 
     // 유저와 할일은 서로 다대다 연관관계를 가져야 한다.
     // 단, @ManyToMany는 사용을 지양한다.
@@ -43,9 +46,16 @@ public class User {
     private List<UserSchedule> users_schedules = new ArrayList<>();
 
 
-    public User(UserRequestDto requestDto) {
-        this.username = requestDto.getUsername();
-        this.email = requestDto.getEmail();
+    public User(UserRequestDto userRequestDto) {
+        this.username = userRequestDto.getUsername();
+        this.email = userRequestDto.getEmail();
+    }
+
+    public User(String username, String email, String password, UserRoleEnum role) {
+        this.username = username;
+        this.email = email;
+        this.password = password;
+        this.role = role;
     }
 
     public void update(UserRequestDto requestDto) {
@@ -55,9 +65,4 @@ public class User {
 
 
 
-    /*
-    public List<Schedule> getAssignedSchedules() {
-        return users_schedules.stream().map(UserSchedule::getSchedule).toList();
-    }
-    */
 }

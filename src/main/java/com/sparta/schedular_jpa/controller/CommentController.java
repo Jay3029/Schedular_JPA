@@ -1,7 +1,7 @@
 package com.sparta.schedular_jpa.controller;
 
-import com.sparta.schedular_jpa.dto.CommentRequestDto;
-import com.sparta.schedular_jpa.dto.CommentResponseDto;
+import com.sparta.schedular_jpa.dto.commentDto.CommentRequestDto;
+import com.sparta.schedular_jpa.dto.commentDto.CommentResponseDto;
 import com.sparta.schedular_jpa.service.CommentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
