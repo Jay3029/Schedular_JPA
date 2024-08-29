@@ -40,15 +40,12 @@ public class ScheduleService {
         Schedule schedule = new Schedule(scheduleRequestDto);
         WeatherDto weather = weatherUtil.getWeatherOfDay();
 
+        // 날씨랑 User 연관관계 추가
         schedule.setWeather(weather.getWeather());
-        schedule.setUser_id(user.getId());
+        schedule.addUser(user);
 
         // DB에 저장
         scheduleRepository.save(schedule);
-
-        // 유저와 일정의 연관관계 설정
-        UserSchedule userSchedule = new UserSchedule(user, schedule);
-        userScheduleRepository.save(userSchedule);
 
         // Entity -> ResponseDTO
         ScheduleResponseDto scheduleResponseDTO = new ScheduleResponseDto(schedule);
@@ -78,19 +75,30 @@ public class ScheduleService {
 
     // UPDATE Schedule Service
     @Transactional
-    public void updateSchedule(Long id, ScheduleRequestDto scheduleRequestDto) {
-        // Optional, 해당 작성자의 일정이 존재하는지 확인
+    public void updateSchedule(Long id, ScheduleRequestDto scheduleRequestDto, HttpServletRequest request) {
+        User user = jwtUtil.getUserFromToken(request, userRepository);
         Schedule schedule = findSchedule(id);
-        System.out.println(scheduleRequestDto.getUserid());
+
+        List<Schedule> scheduleList = user.getSchedules();
+        if(!scheduleList.contains(schedule)) {
+            throw new RuntimeException("Is not your schedule");
+        }
+        // Optional, 해당 작성자의 일정이 존재하는지 확인
+
         schedule.update(scheduleRequestDto);
     }
 
 
     // DELETE Schedule Service
     @Transactional
-    public void deleteSchedule(Long id) {
-        // 해당 작성자의 일정이 존재하는지 확인
+    public void deleteSchedule(Long id, HttpServletRequest request) {
+        User user = jwtUtil.getUserFromToken(request, userRepository);
         Schedule schedule = findSchedule(id);
+
+        List<Schedule> scheduleList = user.getSchedules();
+        if(!scheduleList.contains(schedule)) {
+            throw new RuntimeException("Is not your schedule");
+        }
         scheduleRepository.delete(schedule);
     }
 
@@ -101,5 +109,6 @@ public class ScheduleService {
                 new IllegalArgumentException("Is not Exist Schedule.")
         );
     }
+
 
 }

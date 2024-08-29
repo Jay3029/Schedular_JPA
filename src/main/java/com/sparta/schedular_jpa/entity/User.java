@@ -10,6 +10,7 @@ import lombok.Setter;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @Getter
@@ -31,8 +32,6 @@ public class User {
     private Timestamp createdDate;
     @Column(name = "modified_date", nullable = false, insertable = false)
     private Timestamp modifiedDate;
-    @Column(name = "schedule_id")
-    private String scheduleIdList;
     @Column(name = "password")
     private String password;
     @Column(name = "role", nullable = false)
@@ -43,7 +42,7 @@ public class User {
     // 단, @ManyToMany는 사용을 지양한다.
     // 결과적으로 중간 table을 거쳐 OneToMany, ManyToOne의 연결을 하도록 설정
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<UserSchedule> users_schedules = new ArrayList<>();
+    private List<UserSchedule> userSchedules = new ArrayList<>();
 
 
     public User(UserRequestDto userRequestDto) {
@@ -63,6 +62,23 @@ public class User {
         this.email = requestDto.getEmail();
     }
 
+    // 스케줄을 유저에 추가
+    public void addSchedule(Schedule schedule) {
+        UserSchedule userSchedule = new UserSchedule(this, schedule);
+        this.userSchedules.add(userSchedule);
+        schedule.getUserSchedules().add(userSchedule);
+    }
 
+    // 스케줄을 유저에서 제거
+    public void removeSchedule(Schedule schedule) {
+        userSchedules.removeIf(userSchedule -> userSchedule.getSchedule().equals(schedule));
+        schedule.getUserSchedules().removeIf(userSchedule -> userSchedule.getUser().equals(this));
+    }
+
+    public List<Schedule> getSchedules() {
+        return this.userSchedules.stream()
+                .map(UserSchedule::getSchedule)
+                .collect(Collectors.toList());
+    }
 
 }

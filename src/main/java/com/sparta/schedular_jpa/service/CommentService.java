@@ -4,8 +4,12 @@ import com.sparta.schedular_jpa.dto.commentDto.CommentRequestDto;
 import com.sparta.schedular_jpa.dto.commentDto.CommentResponseDto;
 import com.sparta.schedular_jpa.entity.Comment;
 import com.sparta.schedular_jpa.entity.Schedule;
+import com.sparta.schedular_jpa.entity.User;
+import com.sparta.schedular_jpa.jwt.JwtUtil;
 import com.sparta.schedular_jpa.repository.CommentRepository;
 import com.sparta.schedular_jpa.repository.ScheduleRepository;
+import com.sparta.schedular_jpa.repository.UserRepository;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,7 +23,8 @@ public class CommentService {
 
     private final ScheduleRepository scheduleRepository;
     private final CommentRepository commentRepository;
-    private final ScheduleService scheduleService;
+    private final JwtUtil jwtUtil;
+    private final UserRepository userRepository;
 
 
     // CREATE
@@ -68,8 +73,16 @@ public class CommentService {
 
     // UPDATE Comment
     @Transactional
-    public void updateComment(Long id, CommentRequestDto commentRequestDto) {
+    public void updateComment(Long id, CommentRequestDto commentRequestDto, HttpServletRequest request) {
+        User user = jwtUtil.getUserFromToken(request, userRepository);
         Comment comment = findComment(id);
+        Schedule schedule = comment.getSchedule();
+
+        List<Schedule> scheduleList = user.getSchedules();
+        if(!scheduleList.contains(schedule)) {
+            throw new RuntimeException("Is not your comment");
+        }
+
         comment.update(commentRequestDto);
     }
 
@@ -77,7 +90,7 @@ public class CommentService {
 
     // DELETE Comment
     @Transactional
-    public void deleteComment(Long id) {
+    public void deleteComment(Long id, HttpServletRequest request) {
         Comment comment = findComment(id);
         commentRepository.delete(comment);
     }

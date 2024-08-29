@@ -83,15 +83,15 @@ public class UserService {
     }
 
 
-    // CREATE
-    public UserResponseDto createUser(UserRequestDto userRequestDto) {
-        User user = new User(userRequestDto);
-
-        User savedUser = userRepository.save(user);
-
-        UserResponseDto userResponseDto = new UserResponseDto(user);
-        return userResponseDto;
-    }
+//    // CREATE
+//    public UserResponseDto createUser(UserRequestDto userRequestDto) {
+//        User user = new User(userRequestDto);
+//
+//        User savedUser = userRepository.save(user);
+//
+//        UserResponseDto userResponseDto = new UserResponseDto(user);
+//        return userResponseDto;
+//    }
 
 
 
@@ -145,6 +145,8 @@ public class UserService {
         // 일정에 추가 유저 등록
         UserSchedule userSchedule = new UserSchedule(user, schedule);
         userScheduleRepository.save(userSchedule);
+
+        schedule.addUser(user);
 
         // 반환값 생성
         UserScheduleResponseDto userScheduleResponseDto = new UserScheduleResponseDto(userSchedule);

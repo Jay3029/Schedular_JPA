@@ -61,9 +61,11 @@ public class ScheduleController {
 
     // UPDATE (비밀번호 요구)
     @PutMapping("/schedules/{id}")
-    public void updateSchedule(@PathVariable Long id, @RequestBody ScheduleRequestDto scheduleRequestDto) {
+    public void updateSchedule(@PathVariable Long id,
+                               @RequestBody ScheduleRequestDto scheduleRequestDto,
+                               HttpServletRequest request) {
 
-        scheduleService.updateSchedule(id, scheduleRequestDto);
+        scheduleService.updateSchedule(id, scheduleRequestDto, request);
 
     }
 
@@ -71,9 +73,10 @@ public class ScheduleController {
 
     // DELETE (비밀번호 요구)
     @DeleteMapping("/schedules/{id}")
-    public void deleteSchedule(@PathVariable Long id) {
+    public void deleteSchedule(@PathVariable Long id,
+                               HttpServletRequest request) {
 
-        scheduleService.deleteSchedule(id);
+        scheduleService.deleteSchedule(id, request);
 
     }
 }

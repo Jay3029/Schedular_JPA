@@ -3,6 +3,7 @@ package com.sparta.schedular_jpa.dto.scheduleDto;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.sparta.schedular_jpa.dto.userDto.AssignedUsersResponseDto;
 import com.sparta.schedular_jpa.entity.Schedule;
+import com.sparta.schedular_jpa.entity.User;
 import lombok.Getter;
 import lombok.Setter;
 import java.sql.Timestamp;
@@ -14,7 +15,7 @@ import java.util.List;
 public class ScheduleResponseDto {
 
     private Long id;
-    private Long userid;
+    private List<Long> user;
     private String weather;
     private String title;
     private String contents;
@@ -25,7 +26,7 @@ public class ScheduleResponseDto {
 
     public ScheduleResponseDto(Schedule schedule) {
         this.id = schedule.getId();
-        this.userid = schedule.getUser_id();
+        this.user = schedule.getUsers().stream().map(User::getId).toList();
         this.weather = schedule.getWeather();
         this.title = schedule.getTitle();
         this.contents = schedule.getContents();

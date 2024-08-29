@@ -144,5 +144,10 @@ public class JwtUtil {
         );
         return user;
     }
+    public String getEmailFromToken(HttpServletRequest request) {
+        String token = new JwtUtil().getJwtFromHeader(request);
+        Claims claims = getUserInfoFromToken(token);
+        return claims.getSubject();
+    }
 
 }

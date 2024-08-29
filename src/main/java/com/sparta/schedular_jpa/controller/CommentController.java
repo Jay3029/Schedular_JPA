@@ -3,6 +3,7 @@ package com.sparta.schedular_jpa.controller;
 import com.sparta.schedular_jpa.dto.commentDto.CommentRequestDto;
 import com.sparta.schedular_jpa.dto.commentDto.CommentResponseDto;
 import com.sparta.schedular_jpa.service.CommentService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -47,14 +48,22 @@ public class CommentController {
         return commentService.getAllComments();
 
     }
+    @GetMapping("/comments")
+    public List<CommentResponseDto> getCommentsOfSchedule(@RequestBody Long scheduleId) {
+
+        return commentService.getCommentsOfSchedule(scheduleId);
+
+    }
 
 
 
     // UPDATE
     @PutMapping("/comments/{id}")
-    public void updateSchedule(@PathVariable Long id, @RequestBody CommentRequestDto commentRequestDto) {
+    public void updateSchedule(@PathVariable Long id,
+                               @RequestBody CommentRequestDto commentRequestDto,
+                               HttpServletRequest request) {
 
-        commentService.updateComment(id, commentRequestDto);
+        commentService.updateComment(id, commentRequestDto, request);
 
     }
 
@@ -62,9 +71,10 @@ public class CommentController {
 
     // DELETE (비밀번호 요구)
     @DeleteMapping("/comments/{id}")
-    public void deleteSchedule(@PathVariable Long id) {
+    public void deleteSchedule(@PathVariable Long id,
+                               HttpServletRequest request) {
 
-        commentService.deleteComment(id);
+        commentService.deleteComment(id, request);
 
     }
 }

@@ -9,6 +9,7 @@ import lombok.Setter;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @Getter
@@ -19,7 +20,9 @@ public class Schedule {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
+    @Column(name = "user_id")
+    private Long user_id;
     @Column(name = "title", nullable = false)
     private String title;
     @Column(name = "contents", nullable = false, length = 500)
@@ -28,8 +31,6 @@ public class Schedule {
     private Timestamp createdDate;
     @Column(name = "modified_date", nullable = false, insertable = false)
     private Timestamp modifiedDate;
-    @Column(name = "user_id")
-    private Long user_id;
     @Column(name = "weather")
     private String weather;
 
@@ -40,12 +41,12 @@ public class Schedule {
 
 
     // 유저와 할일의 다대다 연관관계를 위한 OneToMany ManyToOne 연관관계 설정
-    @OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<UserSchedule> users_schedules = new ArrayList<>();
+    @OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserSchedule> userSchedules = new ArrayList<>();
 
 
     public List<User> getAssignedUsers() {
-        return users_schedules.stream().map(UserSchedule::getUser).toList();
+        return userSchedules.stream().map(UserSchedule::getUser).toList();
     }
 
 
@@ -58,6 +59,25 @@ public class Schedule {
     public void update(ScheduleRequestDto requestDto) {
         this.title = requestDto.getTitle();
         this.contents = requestDto.getContents();
+    }
+
+    // 유저를 스케줄에 추가
+    public void addUser(User user) {
+        UserSchedule userSchedule = new UserSchedule(user, this);
+        this.userSchedules.add(userSchedule);
+        user.getUserSchedules().add(userSchedule);
+    }
+
+    // 유저를 스케줄에서 제거
+    public void removeUser(User user) {
+        userSchedules.removeIf(userSchedule -> userSchedule.getUser().equals(user));
+        user.getUserSchedules().removeIf(userSchedule -> userSchedule.getSchedule().equals(this));
+    }
+
+    public List<User> getUsers() {
+        return this.userSchedules.stream()
+                .map(UserSchedule::getUser)
+                .collect(Collectors.toList());
     }
 
 }
