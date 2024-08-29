@@ -7,7 +7,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.sql.Time;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -17,7 +19,7 @@ import java.util.stream.Collectors;
 @Setter
 @Table(name = "user")
 @NoArgsConstructor
-public class User {
+public class User extends Timestamped {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,15 +30,12 @@ public class User {
     private String username;
     @Column(name = "email_address", nullable = false)
     private String email;
-    @Column(name = "created_date", nullable = false, insertable = false, updatable = false)
-    private Timestamp createdDate;
-    @Column(name = "modified_date", nullable = false, insertable = false)
-    private Timestamp modifiedDate;
     @Column(name = "password")
     private String password;
     @Column(name = "role", nullable = false)
     @Enumerated(value = EnumType.STRING)
     private UserRoleEnum role;
+
 
     // 유저와 할일은 서로 다대다 연관관계를 가져야 한다.
     // 단, @ManyToMany는 사용을 지양한다.

@@ -5,8 +5,10 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -16,7 +18,7 @@ import java.util.stream.Collectors;
 @Setter
 @Table(name = "schedule")
 @NoArgsConstructor
-public class Schedule {
+public class Schedule extends Timestamped {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,12 +29,9 @@ public class Schedule {
     private String title;
     @Column(name = "contents", nullable = false, length = 500)
     private String contents;
-    @Column(name = "created_date", nullable = false, insertable = false, updatable = false)
-    private Timestamp createdDate;
-    @Column(name = "modified_date", nullable = false, insertable = false)
-    private Timestamp modifiedDate;
     @Column(name = "weather")
     private String weather;
+
 
 
     // 다대일 양방향 관계 설정, 영속성 전이 타입을 ALL로 하여 영속 상태 변경에 대해 함께 동작하도록 설정

@@ -7,6 +7,7 @@ import com.sparta.schedular_jpa.entity.User;
 import lombok.Getter;
 import lombok.Setter;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -19,8 +20,8 @@ public class ScheduleResponseDto {
     private String weather;
     private String title;
     private String contents;
-    private Timestamp createdDate;
-    private Timestamp modifiedDate;
+    private LocalDateTime createdDate;
+    private LocalDateTime modifiedDate;
     private String numOfComments;
     private List<AssignedUsersResponseDto> assignedUsers;
 

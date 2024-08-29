@@ -3,6 +3,7 @@ package com.sparta.schedular_jpa.dto.scheduleDto;
 import lombok.Getter;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 @Getter
 public class ScheduleRequestDto {
@@ -11,8 +12,8 @@ public class ScheduleRequestDto {
     private Long userid;
     private String title;
     private String contents;
-    private Timestamp createdDate;
-    private Timestamp modifiedDate;
+    private LocalDateTime createdDate;
+    private LocalDateTime modifiedDate;
 
 }
 

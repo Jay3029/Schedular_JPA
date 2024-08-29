@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -15,8 +16,8 @@ public class UserResponseDto {
     private Long id;
     private String username;
     private String email;
-    private Timestamp createdDate;
-    private Timestamp modifiedDate;
+    private LocalDateTime createdDate;
+    private LocalDateTime modifiedDate;
     private List<Long> schedules;
 
     public UserResponseDto(User user) {

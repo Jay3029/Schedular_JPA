@@ -7,13 +7,14 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
 @Setter
 @Table(name = "comment")
 @NoArgsConstructor
-public class Comment {
+public class Comment extends Timestamped {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,10 +23,6 @@ public class Comment {
     private String username;
     @Column(name = "contents", nullable = false, length = 500)
     private String contents;
-    @Column(name = "created_date", nullable = false, insertable = false, updatable = false)
-    private Timestamp createdDate;
-    @Column(name = "modified_date", nullable = false, insertable = false)
-    private Timestamp modifiedDate;
 
     // 하나의 일정에 복수의 댓글이 연관, 일대다 연관관계 설정
     // 외래키의 주인

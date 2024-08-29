@@ -48,7 +48,7 @@ public class CommentController {
         return commentService.getAllComments();
 
     }
-    @GetMapping("/comments")
+    @GetMapping("/comments/by_schedule")
     public List<CommentResponseDto> getCommentsOfSchedule(@RequestBody Long scheduleId) {
 
         return commentService.getCommentsOfSchedule(scheduleId);

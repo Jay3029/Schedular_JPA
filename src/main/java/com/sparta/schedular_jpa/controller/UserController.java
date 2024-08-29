@@ -42,19 +42,16 @@ public class UserController {
         return ResponseEntity.ok().headers(httpHeaders).body(signInResponseDto);
     }
 
-    // GET 토큰 확인
-    @GetMapping("/auth")
-
 
     /*----------------------------------------------------------------------------------------------------------------*/
 
 
-    //CREATE (유저 저장)
+    /*//CREATE (유저 저장)
     @PostMapping("/users")
     public ResponseEntity<UserResponseDto> createUser(@RequestBody UserRequestDto userRequestDto) {
         UserResponseDto userResponseDto = userService.createUser(userRequestDto);
         return ResponseEntity.ok().body(userResponseDto);
-    }
+    }*/
 
 
 
